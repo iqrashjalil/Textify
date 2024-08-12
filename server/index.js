@@ -1,10 +1,11 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
-
-dotenv.config();
+import authRouter from "./routes/authRoutes.js";
+import errorMiddleware from "./middlewares/error-middleware.js";
 
 const app = express();
 const Port = process.env.PORT || 4000;
@@ -21,6 +22,8 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+app.use("/api/auth", authRouter);
+
 const server = app.listen(Port, () => {
   console.log(`Server is Running On ${Port}`);
 });
@@ -36,3 +39,7 @@ const ConnectDB = async () => {
 };
 
 ConnectDB();
+
+app.use(errorMiddleware);
+
+export default app;
